@@ -18,7 +18,7 @@ const validationSchema = yup.object({
 });
 
 const SettingDialog = ({ open, handleClose }) => {
-  const formik = useFormik({
+  const { handleSubmit, handleChange, values, errors, touched } = useFormik({
     initialValues: {
       user_name: "",
       team_name: "",
@@ -50,26 +50,26 @@ const SettingDialog = ({ open, handleClose }) => {
           centrale database, daarnaast wordt deze informatie bewaard in een
           'cookie' zodat je deze niet vaker in hoeft te vullen.
         </Typography>
-        <StyledForm onSubmit={formik.handleSubmit}>
+        <StyledForm onSubmit={handleSubmit}>
           <TextField
             fullWidth
             id="user_name"
             name="user_name"
             label="User"
-            value={formik.values.user_name}
-            onChange={formik.handleChange}
-            error={formik.touched.user_name && Boolean(formik.errors.user_name)}
-            helperText={formik.touched.user_name && formik.errors.user_name}
+            value={values.user_name}
+            onChange={handleChange}
+            error={touched.user_name && Boolean(errors.user_name)}
+            helperText={touched.user_name && errors.user_name}
           />
           <TextField
             fullWidth
             id="team_name"
             name="team_name"
             label="Team"
-            value={formik.values.team_name}
-            onChange={formik.handleChange}
-            error={formik.touched.team_name && Boolean(formik.errors.team_name)}
-            helperText={formik.touched.team_name && formik.errors.team_name}
+            value={values.team_name}
+            onChange={handleChange}
+            error={touched.team_name && Boolean(errors.team_name)}
+            helperText={touched.team_name && errors.team_name}
           />
           <Button
             color="primary"
