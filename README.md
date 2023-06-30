@@ -1,6 +1,6 @@
 # [LeafletJS map layer and selection menu based on API input](https://www.upwork.com/jobs/~018823e0418cd7fa9a)
 
-I am looking for a frontend developer who can create a leafletJS map layer and layer selection menu based on an API output. As a hobby project for our scout group i have build a 'game page' at https://www.geoclaim.nl to claim streets that are at the current location of the page visitor.
+As a hobby project for our scout group i have build a 'game page' at https://www.geoclaim.nl to claim streets that are at the current location of the page visitor.
 
 This 'game' exists of three steps:
 
@@ -55,11 +55,3 @@ Requirements:
 - The colour should contrast well with the background map.
 - The color cannot be orange (that colour is reserved for claiming streets)
 - Every feature in the data, has got a strength property, this strengt property equals to the opacity of the color. (road sections degrade over time). Strength 100 = opacity 100%
-
-This is a privately funded hobby project, which will be used for scouting purposes, therefore the budget isn't big. I am willing to spend $20 on this code. Don't react when your bid is above that.
-
-Love to hear from you.
-
-Regards
-
-Arjan

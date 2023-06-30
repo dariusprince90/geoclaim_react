@@ -1,24 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import { MapContainer, TileLayer } from "react-leaflet";
+import Location from "./components/Location";
+import NavBar from "./components/NavBar";
+import CheckButton from "./components/CheckButton";
+
+const position = [51.505, -0.09];
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <NavBar />
+      <MapContainer
+        center={position}
+        className="map"
+        zoom={17}
+        zoomControl={false}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Location />
+      </MapContainer>
+      <CheckButton />
+    </>
   );
 }
 
