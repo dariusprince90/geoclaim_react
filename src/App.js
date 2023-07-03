@@ -2,12 +2,13 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import Location from "./components/Location";
 import NavBar from "./components/NavBar";
 import CheckButton from "./components/CheckButton";
+import { CookiesProvider } from "react-cookie";
 
-const position = [51.505, -0.09];
+const position = [52.158462573821, 6.4088820899768];
 
 function App() {
   return (
-    <>
+    <CookiesProvider>
       <NavBar />
       <MapContainer
         center={position}
@@ -22,7 +23,7 @@ function App() {
         <Location />
       </MapContainer>
       <CheckButton />
-    </>
+    </CookiesProvider>
   );
 }
 

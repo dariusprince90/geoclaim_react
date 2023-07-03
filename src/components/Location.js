@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useMap, Marker, Popup } from "react-leaflet";
+import { useMap, Marker, Popup, Polyline } from "react-leaflet";
 import L from "leaflet";
 import newMarker from "../assets/circle-regular.png";
+import { useCookies } from "react-cookie";
 // import newMarker from "../assets/gray_circles_rotate.gif";
 
 const pointerIcon = new L.Icon({
@@ -14,8 +15,11 @@ const pointerIcon = new L.Icon({
 const Location = () => {
   const map = useMap();
   const [position, setPosition] = useState(null);
+  const [roadSections, setRoadSections] = useState([]);
+  const [, setCookie] = useCookies(["search_id"]);
 
   useEffect(() => {
+    if (!map) return;
     map.locate({
       setView: true,
     });
@@ -26,23 +30,36 @@ const Location = () => {
       )
         .then((response) => response.json())
         .then((data) => {
-          // Do something with the fetched data
-          console.log("locationfound :->", data);
+          if (data?.search_id) setCookie("search_id", data?.search_id);
+          setRoadSections(data?.road_sections);
         })
         .catch((error) => {
-          // Handle any errors that occur during the fetch request
           console.error(error);
         });
     });
-  }, [map]);
+  }, [map, setCookie]);
 
-  return position ? (
+  if (!position) return null;
+
+  return (
     <>
       <Marker icon={pointerIcon} position={position}>
         <Popup>You are here</Popup>
       </Marker>
+
+      {roadSections?.map((road) => (
+        <Polyline
+          color={"red"}
+          opacity={0.7}
+          weight={12}
+          key={road.road}
+          positions={road.coordinates.map((coord) => [coord[1], coord[0]])}
+        >
+          <Popup>{road.road}</Popup>
+        </Polyline>
+      ))}
     </>
-  ) : null;
+  );
 };
 
 export default Location;

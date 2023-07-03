@@ -58,4 +58,6 @@ Requirements:
 
 # Sample Data
 
+https://www.geoclaim.nl:8080/api/v1/streets/get_claim_street?map_id=1&lat=52.158462573821&lon=6.4088820899768&archived=true
+
 `test.json`
