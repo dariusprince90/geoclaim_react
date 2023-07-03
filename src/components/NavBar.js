@@ -2,13 +2,16 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Menu } from "@mui/icons-material";
 import SettingDialog from "./SettingDialog";
+import { IconButton } from "@mui/material";
 
 const NavBar = () => {
   const [open, setOpen] = useState(false);
   return (
     <>
       <Styled>
-        <Menu onClick={() => setOpen(true)} />
+        <IconButton onClick={() => setOpen(true)}>
+          <Menu sx={{ color: "#fff" }} />
+        </IconButton>
         <span>geoClaim</span>
       </Styled>
       <SettingDialog open={open} handleClose={() => setOpen(false)} />

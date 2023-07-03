@@ -95,7 +95,7 @@ export default SettingDialog;
 
 const StyledForm = styled.form`
   margin-top: 2rem;
-  width: 30rem;
+  max-width: 30rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;

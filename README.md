@@ -55,3 +55,7 @@ Requirements:
 - The colour should contrast well with the background map.
 - The color cannot be orange (that colour is reserved for claiming streets)
 - Every feature in the data, has got a strength property, this strengt property equals to the opacity of the color. (road sections degrade over time). Strength 100 = opacity 100%
+
+# Sample Data
+
+`test.json`

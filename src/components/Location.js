@@ -21,6 +21,18 @@ const Location = () => {
     });
     map.on("locationfound", (event) => {
       setPosition(event.latlng);
+      fetch(
+        `https://www.geoclaim.nl:8080/api/v1/streets/getstreets?lat=${event.latlng.lat}&lon=${event.latlng.lng}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          // Do something with the fetched data
+          console.log("locationfound :->", data);
+        })
+        .catch((error) => {
+          // Handle any errors that occur during the fetch request
+          console.error(error);
+        });
     });
   }, [map]);
 
