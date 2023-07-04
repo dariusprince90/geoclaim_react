@@ -11,7 +11,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import styled from "styled-components";
-import { useCookies } from "react-cookie";
+import { useApp } from "./AppProvider";
 
 const validationSchema = yup.object({
   user_name: yup.string("Enter your name").required("User is required"),
@@ -19,24 +19,20 @@ const validationSchema = yup.object({
 });
 
 const SettingDialog = ({ open, handleClose }) => {
-  const [cookies, setCookie] = useCookies([
-    "CTuser_name",
-    "CTteam_name",
-    "CTalliance_name",
-    "CTakkoord",
-  ]);
+  const { userName, teamName, setUserName, setTeamName, setAllianceName } =
+    useApp();
 
   const { handleSubmit, handleChange, values, errors, touched } = useFormik({
     initialValues: {
-      user_name: cookies["CTuser_name"],
-      team_name: cookies["CTteam_name"],
+      user_name: userName,
+      team_name: teamName,
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      setCookie("CTuser_name", values.user_name);
-      setCookie("CTteam_name", values.team_name);
-      setCookie("CTalliance_name", "");
-      setCookie("CTakkoord", true);
+      setUserName(values.user_name);
+      setTeamName(values.team_name);
+      setAllianceName("");
+      handleClose();
     },
   });
 

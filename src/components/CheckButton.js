@@ -1,7 +1,11 @@
 import { Button, styled } from "@mui/material";
 
-const CheckButton = () => {
-  return <Styled>Check</Styled>;
+const CheckButton = ({ isCheck = true, ...rest }) => {
+  return (
+    <Styled color={isCheck ? "primary" : "warning"} {...rest}>
+      {isCheck ? "Check" : "Claim"}
+    </Styled>
+  );
 };
 
 export default CheckButton;
@@ -10,6 +14,7 @@ const Styled = styled(Button)({
   position: "absolute",
   top: "90%",
   left: "50%",
+  textTransform: "none",
   transform: "translate(-50%, -50%)",
   zIndex: 999,
 });

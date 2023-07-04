@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useMap, Marker, Popup, Polyline } from "react-leaflet";
 import L from "leaflet";
 import newMarker from "../assets/circle-regular.png";
-import { useCookies } from "react-cookie";
-// import newMarker from "../assets/gray_circles_rotate.gif";
+import CheckButton from "./CheckButton";
+import loadMarker from "../assets/gray_circles_rotate.gif";
+import { useApp } from "./AppProvider";
 
 const pointerIcon = new L.Icon({
   iconUrl: newMarker,
@@ -12,38 +13,97 @@ const pointerIcon = new L.Icon({
   popupAnchor: [-3, -26],
 });
 
+const loadIcon = new L.Icon({
+  iconUrl: loadMarker,
+  iconSize: [25, 25],
+  iconAnchor: [13, 13],
+  popupAnchor: [-3, -26],
+});
+
 const Location = () => {
   const map = useMap();
-  const [position, setPosition] = useState(null);
+  const { userName, teamName, allianceName, position, setPosition } = useApp();
+  const [isCheck, setIsCheck] = useState(true);
   const [roadSections, setRoadSections] = useState([]);
-  const [, setCookie] = useCookies(["search_id"]);
+  const [searchId, setSearchId] = useState();
 
   useEffect(() => {
     if (!map) return;
     map.locate({
-      setView: true,
+      setView: false,
+      // setView: true,
     });
     map.on("locationfound", (event) => {
-      setPosition(event.latlng);
-      fetch(
-        `https://www.geoclaim.nl:8080/api/v1/streets/getstreets?lat=${event.latlng.lat}&lon=${event.latlng.lng}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          if (data?.search_id) setCookie("search_id", data?.search_id);
-          setRoadSections(data?.road_sections);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      setPosition({ lat: 52.158462573821, lng: 6.4088820899768 });
+      // setPosition(event.latlng);
     });
-  }, [map, setCookie]);
+  }, [map]);
+
+  useEffect(() => {
+    if (!position) return;
+    getStreets();
+  }, [position]);
+
+  const getStreets = () => {
+    fetch(
+      `https://www.geoclaim.nl:8080/api/v1/streets/getstreets?lat=${position.lat}&lon=${position.lng}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("getstreets :->", data);
+        setSearchId(data?.search_id);
+        setRoadSections(data?.road_sections);
+        if (data?.road_sections.length > 0) setIsCheck(false);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const claimStreet = () => {
+    fetch(
+      `https://www.geoclaim.nl:8080/api/v1/streets/claimstreet?search_id=${searchId}&map_id=${1}&user_name=${userName}&team_name=${teamName}&alliance_name=${allianceName}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("claimstreet :->", data);
+        getClaimStreet();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const getClaimStreet = () => {
+    fetch(
+      `https://www.geoclaim.nl:8080/api/v1/streets/get_claim_street?map_id=1&lat=${position.lat}&lon=${position.lng}&archived=true`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("get_claim_street :->", data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const handleClick = () => {
+    if (isCheck) {
+      console.log("Check");
+      getStreets();
+    } else {
+      console.log("Claim");
+      claimStreet();
+    }
+  };
 
   if (!position) return null;
 
   return (
     <>
-      <Marker icon={pointerIcon} position={position}>
+      <CheckButton isCheck={isCheck} onClick={handleClick} />
+
+      <Marker icon={!position ? loadIcon : pointerIcon} position={position}>
         <Popup>You are here</Popup>
       </Marker>
 
