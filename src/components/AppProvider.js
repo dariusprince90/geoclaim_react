@@ -1,4 +1,4 @@
-import { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext, useMemo } from "react";
 import { useCookies } from "react-cookie";
 const AppContext = createContext();
 
@@ -15,6 +15,8 @@ const AppProvider = ({ children }) => {
     () => cookie["CTalliance_name"]
   );
   const [position, setPosition] = useState();
+  const [features, setFeatures] = useState(null);
+  const [selectedTeams, setSelectedTeams] = useState([]);
 
   const handleUserName = (name) => {
     setCookie("CTuser_name", name);
@@ -31,6 +33,32 @@ const AppProvider = ({ children }) => {
     setAllianceName(name);
   };
 
+  const results = useMemo(() => {
+    if (!features) return null;
+    const data = features.reduce((acc, feature) => {
+      const allianceName = feature?.properties?.alliance_name;
+      const teamName = feature?.properties?.team_name;
+      const userName = feature?.properties?.user_name;
+
+      if (!acc[allianceName]) {
+        acc[allianceName] = {};
+      }
+
+      if (!acc[allianceName][teamName]) {
+        acc[allianceName][teamName] = {};
+      }
+
+      if (!acc[allianceName][teamName][userName]) {
+        acc[allianceName][teamName][userName] = [];
+      }
+
+      acc[allianceName][teamName][userName].push(feature);
+
+      return acc;
+    }, {});
+    return data;
+  }, [features]);
+
   return (
     <AppContext.Provider
       value={{
@@ -38,6 +66,11 @@ const AppProvider = ({ children }) => {
         teamName,
         allianceName,
         position,
+        features,
+        results,
+        selectedTeams,
+        setSelectedTeams,
+        setFeatures,
         setPosition,
         handleUserName,
         handleTeamName,

@@ -1,19 +1,40 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { Menu } from "@mui/icons-material";
+import { Menu, People } from "@mui/icons-material";
 import SettingDialog from "./SettingDialog";
-import { IconButton } from "@mui/material";
+import { IconButton, Drawer } from "@mui/material";
+import TeamPanel from "./Team";
 
 const NavBar = () => {
   const [open, setOpen] = useState(false);
+  const [openTeam, setOpenTeam] = useState(false);
   return (
     <>
-      <Styled>
-        <IconButton onClick={() => setOpen(true)}>
-          <Menu sx={{ color: "#fff" }} />
-        </IconButton>
-        <span>geoClaim</span>
-      </Styled>
+      {!openTeam && (
+        <Styled>
+          <IconButton onClick={() => setOpenTeam(true)}>
+            <People sx={{ color: "#fff" }} />
+          </IconButton>
+          <span>geoClaim</span>
+          <IconButton onClick={() => setOpen(true)}>
+            <Menu sx={{ color: "#fff" }} />
+          </IconButton>
+        </Styled>
+      )}
+      <Drawer
+        anchor="left"
+        open={openTeam}
+        onClose={() => setOpenTeam(false)}
+        sx={{
+          ".MuiPaper-root": {
+            backgroundColor: "#00000022",
+            maxWidth: 400,
+            overflowX: "hidden",
+          },
+        }}
+      >
+        <TeamPanel />
+      </Drawer>
       <SettingDialog open={open} handleClose={() => setOpen(false)} />
     </>
   );
