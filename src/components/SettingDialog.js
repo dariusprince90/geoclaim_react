@@ -19,8 +19,13 @@ const validationSchema = yup.object({
 });
 
 const SettingDialog = ({ open, handleClose }) => {
-  const { userName, teamName, setUserName, setTeamName, setAllianceName } =
-    useApp();
+  const {
+    userName,
+    teamName,
+    handleUserName,
+    handleTeamName,
+    handleAllianceName,
+  } = useApp();
 
   const { handleSubmit, handleChange, values, errors, touched } = useFormik({
     initialValues: {
@@ -29,9 +34,9 @@ const SettingDialog = ({ open, handleClose }) => {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      setUserName(values.user_name);
-      setTeamName(values.team_name);
-      setAllianceName("");
+      handleUserName(values.user_name);
+      handleTeamName(values.team_name);
+      handleAllianceName("");
       handleClose();
     },
   });
