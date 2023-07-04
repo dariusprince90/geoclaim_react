@@ -40,12 +40,14 @@ const Location = () => {
   useEffect(() => {
     if (!map) return;
     map.locate({
-      setView: true,
+      setView: false,
+      // setView: true,
     });
     map.on("locationfound", (event) => {
-      setPosition(event.latlng);
+      setPosition({ lat: 52.158462573821, lng: 6.4088820899768 });
+      // setPosition(event.latlng);
     });
-  }, [map, setPosition]);
+  }, [map]);
 
   useEffect(() => {
     if (!position) return;
@@ -85,7 +87,7 @@ const Location = () => {
 
   const getClaimStreet = () => {
     fetch(
-      `https://www.geoclaim.nl:8080/api/v1/streets/get_claim_street?map_id=1&lat=${position.lat}&lon=${position.lng}&archived=true`
+      `https://www.geoclaim.nl:8080/api/v1/streets/get_claim_street?map_id=1&lat=${position.lat}&lon=${position.lng}`
     )
       .then((response) => response.json())
       .then((data) => {

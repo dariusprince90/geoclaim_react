@@ -61,3 +61,23 @@ Requirements:
 https://www.geoclaim.nl:8080/api/v1/streets/get_claim_street?map_id=1&lat=52.158462573821&lon=6.4088820899768&archived=true
 
 `test.json`
+
+# How to install local development environment
+
+You have to install node on your platform, latest version is prefered.
+
+```
+npm install
+```
+
+# How to run
+
+```
+npm start
+```
+
+# How to build
+
+```
+npm run build
+```
