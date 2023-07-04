@@ -51,7 +51,7 @@ const Location = () => {
     if (!position) return;
     getStreets();
     getClaimStreet();
-  }, [position]);
+  }, [position, teamName, userName]);
 
   const getStreets = () => {
     fetch(
