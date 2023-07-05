@@ -1,28 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Menu, People } from "@mui/icons-material";
 import SettingDialog from "./SettingDialog";
 import { IconButton, Drawer } from "@mui/material";
 import TeamPanel from "./Team";
+import { useApp } from "./AppProvider";
 
 const NavBar = () => {
   const [open, setOpen] = useState(false);
   const [openTeam, setOpenTeam] = useState(false);
+  const { teamName, userName } = useApp();
+
+  useEffect(() => {
+    if (!teamName || !userName) {
+      setOpen(true);
+    }
+  }, [teamName, userName]);
   return (
     <>
       {!openTeam && (
         <Styled>
-          <IconButton onClick={() => setOpenTeam(true)}>
-            <People sx={{ color: "#fff" }} />
-          </IconButton>
-          <span>geoClaim</span>
           <IconButton onClick={() => setOpen(true)}>
             <Menu sx={{ color: "#fff" }} />
+          </IconButton>
+          <span>geoClaim</span>
+          <IconButton onClick={() => setOpenTeam(true)}>
+            <People sx={{ color: "#fff" }} />
           </IconButton>
         </Styled>
       )}
       <Drawer
-        anchor="left"
+        anchor="right"
         open={openTeam}
         onClose={() => setOpenTeam(false)}
         sx={{

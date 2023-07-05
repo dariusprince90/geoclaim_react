@@ -5,7 +5,6 @@ import newMarker from "../assets/circle-regular.png";
 import CheckButton from "./CheckButton";
 import loadMarker from "../assets/gray_circles_rotate.gif";
 import { useApp } from "./AppProvider";
-import { darkenColor, stringToColorCode } from "./Team";
 
 const pointerIcon = new L.Icon({
   iconUrl: newMarker,
@@ -29,9 +28,11 @@ const Location = () => {
     allianceName,
     position,
     features,
+    teamColor,
     setPosition,
     setFeatures,
-    selectedTeams,
+    selectedUsers,
+    setSelectedUsers,
   } = useApp();
   const [isCheck, setIsCheck] = useState(true);
   const [roadSections, setRoadSections] = useState([]);
@@ -49,11 +50,11 @@ const Location = () => {
     });
   }, [map]);
 
+  //On page load should show get_claimed_street data
   useEffect(() => {
     if (!position) return;
-    getStreets();
-    getClaimStreet();
-  }, [position, teamName, userName]);
+    getClaimStreet(true);
+  }, [position]);
 
   const getStreets = () => {
     fetch(
@@ -85,7 +86,7 @@ const Location = () => {
       });
   };
 
-  const getClaimStreet = () => {
+  const getClaimStreet = (firstLoad = false) => {
     fetch(
       `https://www.geoclaim.nl:8080/api/v1/streets/get_claim_street?map_id=1&lat=${position.lat}&lon=${position.lng}`
     )
@@ -93,6 +94,14 @@ const Location = () => {
       .then((data) => {
         console.log("get_claim_street :->", data?.claimed_streets?.features);
         setFeatures(data?.claimed_streets?.features);
+        if (firstLoad) {
+          setSelectedUsers(
+            data?.claimed_streets?.features.map(
+              (f) =>
+                `${f.properties.alliance_name}-${f.properties.team_name}-${f.properties.user_name}`
+            )
+          );
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -101,10 +110,11 @@ const Location = () => {
 
   const handleClick = () => {
     if (isCheck) {
-      console.log("Check");
+      console.log("Check Button Clicked!");
       getStreets();
+      setSelectedUsers([]);
     } else {
-      console.log("Claim");
+      console.log("Claim Button Clicked!");
       claimStreet();
     }
   };
@@ -121,7 +131,7 @@ const Location = () => {
 
       {roadSections?.map((road) => (
         <Polyline
-          color={darkenColor(stringToColorCode(allianceName + teamName), 0)}
+          color="#ff7800"
           opacity={1}
           weight={12}
           key={road.road}
@@ -132,20 +142,19 @@ const Location = () => {
       ))}
       {features
         ?.filter((feature) =>
-          selectedTeams.find(
+          selectedUsers.find(
             (t) =>
               t ===
-              `${feature.properties.alliance_name}-${feature.properties.team_name}`
+              `${feature.properties.alliance_name}-${feature.properties.team_name}-${feature.properties.user_name}`
           )
         )
         .map((feature, index) => (
           <Polyline
-            color={darkenColor(
-              stringToColorCode(
-                feature.properties.alliance_name + feature.properties.team_name
-              ),
-              0
-            )}
+            color={
+              teamColor[
+                `${feature.properties.alliance_name}-${feature.properties.team_name}`
+              ]
+            }
             opacity={feature.properties.strength / 100}
             weight={12}
             key={`feature-${index}`}

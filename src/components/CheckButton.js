@@ -11,8 +11,8 @@ const CheckButton = ({ isCheck = true, ...rest }) => {
 export default CheckButton;
 
 const Styled = styled(Button)({
-  position: "absolute",
-  top: "90%",
+  position: "fixed",
+  bottom: "10%",
   left: "50%",
   textTransform: "none",
   transform: "translate(-50%, -50%)",

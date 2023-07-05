@@ -16,7 +16,7 @@ const AppProvider = ({ children }) => {
   );
   const [position, setPosition] = useState();
   const [features, setFeatures] = useState(null);
-  const [selectedTeams, setSelectedTeams] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState([]);
 
   const handleUserName = (name) => {
     setCookie("CTuser_name", name);
@@ -35,6 +35,7 @@ const AppProvider = ({ children }) => {
 
   const results = useMemo(() => {
     if (!features) return null;
+    const tColor = {};
     const data = features.reduce((acc, feature) => {
       const allianceName = feature?.properties?.alliance_name;
       const teamName = feature?.properties?.team_name;
@@ -46,6 +47,8 @@ const AppProvider = ({ children }) => {
 
       if (!acc[allianceName][teamName]) {
         acc[allianceName][teamName] = {};
+        tColor[`${allianceName}-${teamName}`] =
+          colors[Object.keys(tColor).length % colors.length];
       }
 
       if (!acc[allianceName][teamName][userName]) {
@@ -56,7 +59,7 @@ const AppProvider = ({ children }) => {
 
       return acc;
     }, {});
-    return data;
+    return { data, tColor };
   }, [features]);
 
   return (
@@ -67,9 +70,10 @@ const AppProvider = ({ children }) => {
         allianceName,
         position,
         features,
-        results,
-        selectedTeams,
-        setSelectedTeams,
+        results: results?.data,
+        teamColor: results?.tColor,
+        selectedUsers,
+        setSelectedUsers,
         setFeatures,
         setPosition,
         handleUserName,
@@ -85,3 +89,17 @@ const AppProvider = ({ children }) => {
 export default AppProvider;
 
 export const useApp = () => useContext(AppContext);
+
+const colors = [
+  "#ff0000",
+  "#2c017f",
+  "#01737f",
+  "#ffd53e",
+  "#ff005e",
+  "#01167f",
+  "#8e0784",
+  "#5a017f",
+  "#ff00c8",
+  "#05cdd7",
+  "#014b7f",
+];
