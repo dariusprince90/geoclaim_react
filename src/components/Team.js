@@ -1,5 +1,5 @@
-import React from "react";
-import { SupervisedUserCircle, ExpandMore } from "@mui/icons-material";
+import React, { useState } from "react";
+import { ExpandMore } from "@mui/icons-material";
 import {
   Box,
   Accordion,
@@ -18,20 +18,7 @@ const StyledAccordion = styled(Accordion)(() => ({
 }));
 
 export default function Team() {
-  const { results, teamColor, selectedUsers, setSelectedUsers } = useApp();
-  const handleChange = (name, users) => {
-    console.log("user =>", users);
-    const index = selectedUsers.find((t) => t.indexOf(name) === 0);
-    const filtered = selectedUsers.filter((t) => t.indexOf(name) !== 0);
-    if (index) {
-      setSelectedUsers(filtered);
-    } else if (!!users) {
-      const newSelections = Object.keys(users).map((ukey) => `${name}${ukey}`);
-      setSelectedUsers([...filtered, ...newSelections]);
-    } else {
-      setSelectedUsers([...filtered, name]);
-    }
-  };
+  const { results, teamColor } = useApp();
 
   console.log("results :->", results, teamColor);
 
@@ -50,62 +37,12 @@ export default function Team() {
             </Typography>
           )}
           {Object.keys(results[akey]).map((tkey, tIndex) => {
-            const expanded = !!selectedUsers.find(
-              (team) => team.indexOf(`${akey}-${tkey}-`) === 0
-            );
             return (
-              <StyledAccordion
-                key={`team-${aIndex}-${tIndex}`}
-                expanded={expanded}
-                onChange={() =>
-                  handleChange(`${akey}-${tkey}-`, results[akey][tkey])
-                }
-              >
-                <AccordionSummary
-                  expandIcon={<ExpandMore sx={{ color: "#fff" }} />}
-                  aria-controls={`panel1a-content-${aIndex}-${tIndex}`}
-                  id={`panel1a-header-${aIndex}-${tIndex}`}
-                >
-                  <SupervisedUserCircle
-                    sx={{
-                      color: teamColor[`${akey}-${tkey}`],
-                      mr: 1,
-                      fontSize: 32,
-                    }}
-                  />
-                  <Typography variant="h6" sx={{ mr: 3 }}>
-                    {tkey}
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails
-                  sx={{ pl: 5, display: "flex", flexDirection: "column" }}
-                >
-                  {Object.keys(results[akey][tkey]).map((ukey, uIndex) => (
-                    <FormControlLabel
-                      key={`user-${aIndex}-${tIndex}-${uIndex}`}
-                      control={
-                        <Checkbox
-                          checked={
-                            !!selectedUsers.find(
-                              (u) => u === `${akey}-${tkey}-${ukey}`
-                            )
-                          }
-                          sx={{
-                            color: "gray",
-                            "&.Mui-checked": {
-                              color: teamColor[`${akey}-${tkey}`],
-                            },
-                          }}
-                          onChange={() =>
-                            handleChange(`${akey}-${tkey}-${ukey}`)
-                          }
-                        />
-                      }
-                      label={ukey}
-                    />
-                  ))}
-                </AccordionDetails>
-              </StyledAccordion>
+              <TeamAccordion
+                akey={akey}
+                tkey={tkey}
+                key={`team-${akey}-${tkey}`}
+              />
             );
           })}
         </Box>
@@ -113,3 +50,82 @@ export default function Team() {
     </>
   );
 }
+
+const TeamAccordion = ({ akey, tkey }) => {
+  const [open, setOpen] = useState(false);
+  const { results, teamColor, selectedUsers, setSelectedUsers } = useApp();
+
+  const handleChange = (name, users) => {
+    console.log("user =>", users);
+    const index = selectedUsers.find((t) => t.indexOf(name) === 0);
+    const filtered = selectedUsers.filter((t) => t.indexOf(name) !== 0);
+    if (index) {
+      setSelectedUsers(filtered);
+    } else if (!!users) {
+      const newSelections = Object.keys(users).map((ukey) => `${name}${ukey}`);
+      setSelectedUsers([...filtered, ...newSelections]);
+    } else {
+      setSelectedUsers([...filtered, name]);
+    }
+  };
+
+  const expanded = !!selectedUsers.find(
+    (team) => team.indexOf(`${akey}-${tkey}-`) === 0
+  );
+  return (
+    <StyledAccordion expanded={open}>
+      <AccordionSummary
+        expandIcon={
+          <ExpandMore
+            sx={{ color: "#fff" }}
+            onClick={() => setOpen((o) => !o)}
+          />
+        }
+        aria-controls={`panel1a-content-${akey}-${tkey}`}
+        id={`panel1a-header-${akey}-${tkey}`}
+      >
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={expanded}
+              sx={{
+                color: "gray",
+                "&.Mui-checked": {
+                  color: teamColor[`${akey}-${tkey}`],
+                },
+              }}
+              onChange={() => {
+                handleChange(`${akey}-${tkey}-`, results[akey][tkey]);
+              }}
+            />
+          }
+          label={tkey}
+        />
+      </AccordionSummary>
+      <AccordionDetails
+        sx={{ pl: 5, display: "flex", flexDirection: "column" }}
+      >
+        {Object.keys(results[akey][tkey]).map((ukey, uIndex) => (
+          <FormControlLabel
+            key={`user-${akey}-${tkey}-${uIndex}`}
+            control={
+              <Checkbox
+                checked={
+                  !!selectedUsers.find((u) => u === `${akey}-${tkey}-${ukey}`)
+                }
+                sx={{
+                  color: "gray",
+                  "&.Mui-checked": {
+                    color: teamColor[`${akey}-${tkey}`],
+                  },
+                }}
+                onChange={() => handleChange(`${akey}-${tkey}-${ukey}`)}
+              />
+            }
+            label={ukey}
+          />
+        ))}
+      </AccordionDetails>
+    </StyledAccordion>
+  );
+};

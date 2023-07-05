@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useMap, Marker, Popup, Polyline } from "react-leaflet";
 import L from "leaflet";
 import newMarker from "../assets/circle-regular.png";
@@ -39,6 +39,8 @@ const Location = () => {
   const [roadSections, setRoadSections] = useState([]);
   const [searchId, setSearchId] = useState();
 
+  const markerRef = useRef(null);
+
   useEffect(() => {
     if (!map) return;
     map.locate({
@@ -54,7 +56,7 @@ const Location = () => {
   //On page load should show get_claimed_street data
   useEffect(() => {
     if (!position) return;
-    getClaimStreet(true);
+    getClaimStreet();
   }, [position, teamName, userName]);
 
   const getStreets = () => {
@@ -66,7 +68,15 @@ const Location = () => {
         console.log("getstreets :->", data);
         setSearchId(data?.search_id);
         setRoadSections(data?.road_sections);
-        if (data?.road_sections.length > 0) setIsCheck(false);
+        if (data?.road_sections.length > 0) {
+          setIsCheck(false);
+        } else {
+          setIsCheck(true);
+          const marker = markerRef.current;
+          if (marker) {
+            marker.openPopup();
+          }
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -87,7 +97,7 @@ const Location = () => {
       });
   };
 
-  const getClaimStreet = (firstLoad = false) => {
+  const getClaimStreet = () => {
     fetch(
       `https://www.geoclaim.nl:8080/api/v1/streets/get_claim_street?map_id=1&lat=${position.lat}&lon=${position.lng}`
     )
@@ -95,14 +105,13 @@ const Location = () => {
       .then((data) => {
         console.log("get_claim_street :->", data?.claimed_streets?.features);
         setFeatures(data?.claimed_streets?.features);
-        if (firstLoad) {
-          setSelectedUsers(
-            data?.claimed_streets?.features.map(
-              (f) =>
-                `${f.properties.alliance_name}-${f.properties.team_name}-${f.properties.user_name}`
-            )
-          );
-        }
+        setSelectedUsers(
+          data?.claimed_streets?.features.map(
+            (f) =>
+              `${f.properties.alliance_name}-${f.properties.team_name}-${f.properties.user_name}`
+          )
+        );
+        setIsCheck(true);
       })
       .catch((error) => {
         console.error(error);
@@ -127,8 +136,12 @@ const Location = () => {
     <>
       <CheckButton isCheck={isCheck} onClick={handleClick} />
 
-      <Marker icon={!position ? loadIcon : pointerIcon} position={position}>
-        <Popup>You are here</Popup>
+      <Marker
+        icon={!position ? loadIcon : pointerIcon}
+        position={position}
+        ref={markerRef}
+      >
+        <Popup>Geen weg binnen 10 meter van locatie</Popup>
       </Marker>
 
       {roadSections?.map((road) => (
