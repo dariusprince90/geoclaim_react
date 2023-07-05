@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { Menu, People } from "@mui/icons-material";
 import SettingDialog from "./SettingDialog";
@@ -7,20 +7,14 @@ import TeamPanel from "./Team";
 import { useApp } from "./AppProvider";
 
 const NavBar = () => {
-  const [open, setOpen] = useState(false);
+  const { modalOpen, setModalOpen } = useApp();
   const [openTeam, setOpenTeam] = useState(false);
-  const { teamName, userName } = useApp();
 
-  useEffect(() => {
-    if (!teamName || !userName) {
-      setOpen(true);
-    }
-  }, [teamName, userName]);
   return (
     <>
       {!openTeam && (
         <Styled>
-          <IconButton onClick={() => setOpen(true)}>
+          <IconButton onClick={() => setModalOpen(true)}>
             <Menu sx={{ color: "#fff" }} />
           </IconButton>
           <span>geoClaim</span>
@@ -43,7 +37,7 @@ const NavBar = () => {
       >
         <TeamPanel />
       </Drawer>
-      <SettingDialog open={open} handleClose={() => setOpen(false)} />
+      <SettingDialog open={modalOpen} handleClose={() => setModalOpen(false)} />
     </>
   );
 };

@@ -17,6 +17,7 @@ const AppProvider = ({ children }) => {
   const [position, setPosition] = useState();
   const [features, setFeatures] = useState(null);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleUserName = (name) => {
     setCookie("CTuser_name", name);
@@ -73,6 +74,8 @@ const AppProvider = ({ children }) => {
         results: results?.data,
         teamColor: results?.tColor,
         selectedUsers,
+        modalOpen,
+        setModalOpen,
         setSelectedUsers,
         setFeatures,
         setPosition,

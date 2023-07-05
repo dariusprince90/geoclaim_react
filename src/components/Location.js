@@ -29,6 +29,7 @@ const Location = () => {
     position,
     features,
     teamColor,
+    setModalOpen,
     setPosition,
     setFeatures,
     selectedUsers,
@@ -41,12 +42,12 @@ const Location = () => {
   useEffect(() => {
     if (!map) return;
     map.locate({
-      // setView: false,
-      setView: true,
+      setView: false,
+      // setView: true,
     });
     map.on("locationfound", (event) => {
-      // setPosition({ lat: 52.158462573821, lng: 6.4088820899768 });
-      setPosition(event.latlng);
+      setPosition({ lat: 52.158462573821, lng: 6.4088820899768 });
+      // setPosition(event.latlng);
     });
   }, [map]);
 
@@ -54,7 +55,7 @@ const Location = () => {
   useEffect(() => {
     if (!position) return;
     getClaimStreet(true);
-  }, [position]);
+  }, [position, teamName, userName]);
 
   const getStreets = () => {
     fetch(
@@ -115,7 +116,8 @@ const Location = () => {
       setSelectedUsers([]);
     } else {
       console.log("Claim Button Clicked!");
-      claimStreet();
+      if (!teamName || !userName) setModalOpen(true);
+      else claimStreet();
     }
   };
 
