@@ -44,12 +44,12 @@ const Location = () => {
   useEffect(() => {
     if (!map) return;
     map.locate({
-      // setView: false,
-      setView: true,
+      setView: false,
+      // setView: true,
     });
     map.on("locationfound", (event) => {
-      // setPosition({ lat: 52.158462573821, lng: 6.4088820899768 });
-      setPosition(event.latlng);
+      setPosition({ lat: 52.158462573821, lng: 6.4088820899768 });
+      // setPosition(event.latlng);
     });
   }, [map]);
 
@@ -144,17 +144,18 @@ const Location = () => {
         <Popup>Geen weg binnen 10 meter van locatie</Popup>
       </Marker>
 
-      {roadSections?.map((road) => (
-        <Polyline
-          color="#ff7800"
-          opacity={1}
-          weight={6}
-          key={road.road}
-          positions={road.coordinates.map((coord) => [coord[1], coord[0]])}
-        >
-          <Popup>{road.road}</Popup>
-        </Polyline>
-      ))}
+      {!isCheck &&
+        roadSections?.map((road) => (
+          <Polyline
+            color="#ff7800"
+            opacity={1}
+            weight={6}
+            key={road.road}
+            positions={road.coordinates.map((coord) => [coord[1], coord[0]])}
+          >
+            <Popup>{road.road}</Popup>
+          </Polyline>
+        ))}
       {features
         ?.filter((feature) =>
           selectedUsers.find(

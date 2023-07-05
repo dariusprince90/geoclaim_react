@@ -12,7 +12,7 @@ export default CheckButton;
 
 const Styled = styled(Button)({
   position: "fixed",
-  bottom: "10%",
+  bottom: "5%",
   left: "50%",
   textTransform: "none",
   transform: "translate(-50%, -50%)",
