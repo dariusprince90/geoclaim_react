@@ -29,9 +29,12 @@ const NavBar = () => {
         onClose={() => setOpenTeam(false)}
         sx={{
           ".MuiPaper-root": {
-            backgroundColor: "#00000022",
+            backgroundColor: "#00000055",
             maxWidth: 400,
             overflowX: "hidden",
+          },
+          ".MuiBackdrop-root": {
+            backgroundColor: "transparent",
           },
         }}
       >
