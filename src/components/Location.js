@@ -133,7 +133,7 @@ const Location = () => {
         <Polyline
           color="#ff7800"
           opacity={1}
-          weight={12}
+          weight={6}
           key={road.road}
           positions={road.coordinates.map((coord) => [coord[1], coord[0]])}
         >
@@ -156,7 +156,7 @@ const Location = () => {
               ]
             }
             opacity={feature.properties.strength / 100}
-            weight={12}
+            weight={6}
             key={`feature-${index}`}
             positions={feature?.geometry?.coordinates.map((coord) => [
               coord[1],
