@@ -45,6 +45,7 @@ const Location = () => {
     if (!map) return;
     map.locate({
       // setView: false,
+      watch: true,
       setView: true,
     });
     map.on("locationfound", (event) => {
