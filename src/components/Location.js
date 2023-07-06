@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useMap, Marker, Popup, Polyline } from "react-leaflet";
 import L from "leaflet";
 import newMarker from "../assets/circle-regular.png";
@@ -40,6 +40,7 @@ const Location = () => {
   const [searchId, setSearchId] = useState();
 
   const markerRef = useRef(null);
+  const claimed = useRef(false);
 
   useEffect(() => {
     if (!map) return;
@@ -52,13 +53,41 @@ const Location = () => {
       // setPosition({ lat: 52.158462573821, lng: 6.4088820899768 });
       setPosition(event.latlng);
     });
-  }, [map]);
+  }, [map, setPosition]);
 
-  //On page load should show get_claimed_street data
+  const getClaimStreet = useCallback(() => {
+    fetch(
+      `https://www.geoclaim.nl:8080/api/v1/streets/get_claim_street?map_id=1&lat=${position.lat}&lon=${position.lng}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("get_claim_street :->", data?.claimed_streets?.features);
+        setFeatures(data?.claimed_streets?.features);
+        setSelectedUsers(
+          data?.claimed_streets?.features.map(
+            (f) =>
+              `${f.properties.alliance_name}-${f.properties.team_name}-${f.properties.user_name}`
+          )
+        );
+        setIsCheck(true);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [position, setFeatures, setSelectedUsers]);
+
+  // On page load should show get_claimed_street data
   useEffect(() => {
-    if (!position) return;
+    if (!position || claimed.current) return;
     getClaimStreet();
-  }, [position, teamName, userName]);
+    claimed.current = true;
+  }, [position, getClaimStreet]);
+
+  // When Team and User changes
+  useEffect(() => {
+    if (!teamName || !userName) return;
+    getClaimStreet();
+  }, [teamName, userName, getClaimStreet]);
 
   const getStreets = () => {
     fetch(
@@ -92,27 +121,6 @@ const Location = () => {
       .then((data) => {
         console.log("claimstreet :->", data);
         getClaimStreet();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  const getClaimStreet = () => {
-    fetch(
-      `https://www.geoclaim.nl:8080/api/v1/streets/get_claim_street?map_id=1&lat=${position.lat}&lon=${position.lng}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("get_claim_street :->", data?.claimed_streets?.features);
-        setFeatures(data?.claimed_streets?.features);
-        setSelectedUsers(
-          data?.claimed_streets?.features.map(
-            (f) =>
-              `${f.properties.alliance_name}-${f.properties.team_name}-${f.properties.user_name}`
-          )
-        );
-        setIsCheck(true);
       })
       .catch((error) => {
         console.error(error);
