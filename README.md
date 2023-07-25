@@ -8,7 +8,7 @@ First, install git on your computer from https://git-scm.com/downloads
 git clone https://github.com/dariusprince90/geoclaim_react.git
 ```
 
-# How to install local development environment
+# Install node modules
 
 You have to install node on your platform, latest version is prefered.
 
@@ -16,7 +16,7 @@ You have to install node on your platform, latest version is prefered.
 npm install
 ```
 
-# How to run
+# How to run on your local
 
 ```
 npm start
